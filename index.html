@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural Student Management Hub</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --cyber-blue: #00d4ff;
+            --cyber-purple: #b624ff;
+            --neon-pink: #ff0080;
+            --matrix-green: #00ff41;
+            --dark-bg: #0a0a0f;
+            --card-bg: rgba(20, 20, 30, 0.8);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --text-light: #e0e6ed;
+            --text-muted: #8892b0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-light);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 25% 25%, var(--cyber-blue) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, var(--cyber-purple) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, var(--neon-pink) 0%, transparent 50%);
+            opacity: 0.1;
+            z-index: -2;
+            animation: backgroundShift 20s ease-in-out infinite;
+        }
+
+        @keyframes backgroundShift {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(180deg); }
+        }
+
+        /* Floating Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--cyber-blue);
+            border-radius: 50%;
+            animation: float 10s infinite linear;
+        }
+
+        .particle:nth-child(2n) { background: var(--cyber-purple); }
+        .particle:nth-child(3n) { background: var(--matrix-green); }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100px) translateX(100px); opacity: 0; }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--cyber-blue), var(--cyber-purple));
+            border-radius: 2px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: translateX(-50%) scaleX(1); }
+            50% { opacity: 0.7; transform: translateX(-50%) scaleX(1.2); }
+        }
+
+        .main-title {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--cyber-blue), var(--cyber-purple), var(--neon-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            animation: titleGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes titleGlow {
+            0%, 100% { filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.3)); }
+            50% { filter: drop-shadow(0 0 20px rgba(182, 36, 255, 0.5)); }
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            font-weight: 300;
+            letter-spacing: 0.05em;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--cyber-blue), transparent);
+            animation: scan 3s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 212, 255, 0.1);
+            border-color: rgba(0, 212, 255, 0.3);
+        }
+
+        .section-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--cyber-blue);
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .section-title::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: var(--neon-pink);
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .cyber-input {
+            width: 100%;
+            padding: 16px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 12px;
+            color: var(--text-light);
+            font-size: 16px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .cyber-input:focus {
+            outline: none;
+            border-color: var(--cyber-blue);
+            box-shadow: 
+                0 0 20px rgba(0, 212, 255, 0.2),
+                inset 0 0 20px rgba(0, 212, 255, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .cyber-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .cyber-btn {
+            background: linear-gradient(45deg, var(--cyber-blue), var(--cyber-purple));
+            border: none;
+            border-radius: 12px;
+            color: white;
+            cursor: pointer;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 16px 32px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 32px rgba(0, 212, 255, 0.2);
+        }
+
+        .cyber-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .cyber-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(0, 212, 255, 0.4);
+        }
+
+        .cyber-btn:hover::before {
+            left: 100%;
+        }
+
+        .cyber-btn:active {
+            transform: translateY(0);
+        }
+
+        .cyber-btn.secondary {
+            background: linear-gradient(45deg, var(--neon-pink), #ff4757);
+            box-shadow: 0 8px 32px rgba(255, 0, 128, 0.2);
+        }
+
+        .cyber-btn.secondary:hover {
+            box-shadow: 0 12px 40px rgba(255, 0, 128, 0.4);
+        }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 40px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 20px 60px 20px 24px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(0, 255, 65, 0.3);
+            border-radius: 50px;
+            color: var(--text-light);
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--matrix-green);
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--matrix-green);
+            font-size: 20px;
+            pointer-events: none;
+        }
+
+        .student-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+        }
+
+        .student-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .student-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cyber-blue), var(--cyber-purple), var(--neon-pink));
+        }
+
+        .student-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: rgba(0, 212, 255, 0.3);
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.3),
+                0 0 40px rgba(0, 212, 255, 0.1);
+        }
+
+        .student-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .student-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--cyber-blue), var(--cyber-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+            margin-right: 20px;
+            box-shadow: 0 8px 32px rgba(0, 212, 255, 0.3);
+        }
+
+        .student-name {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-light);
+            margin-bottom: 5px;
+        }
+
+        .student-grade {
+            color: var(--cyber-blue);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .student-details {
+            space-y: 12px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .detail-icon {
+            width: 20px;
+            margin-right: 15px;
+            color: var(--matrix-green);
+        }
+
+        .detail-label {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            min-width: 80px;
+            margin-right: 15px;
+        }
+
+        .detail-value {
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .student-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        .btn-small {
+            padding: 10px 20px;
+            font-size: 12px;
+            border-radius: 8px;
+        }
+
+        .loading-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 20px;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(0, 212, 255, 0.2);
+            border-top: 3px solid var(--cyber-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: var(--text-muted);
+            font-family: 'Orbitron', monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .no-data-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .error-message {
+            background: rgba(255, 0, 128, 0.1);
+            border: 1px solid rgba(255, 0, 128, 0.3);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            color: var(--neon-pink);
+        }
+
+        .notification {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            padding: 20px 30px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-family: 'Orbitron', monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: rgba(0, 255, 65, 0.1);
+            color: var(--matrix-green);
+            box-shadow: 0 8px 32px rgba(0, 255, 65, 0.2);
+        }
+
+        .notification.error {
+            background: rgba(255, 0, 128, 0.1);
+            color: var(--neon-pink);
+            box-shadow: 0 8px 32px rgba(255, 0, 128, 0.2);
+        }
+
+        .config-alert {
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 40px;
+            color: #ffc107;
+        }
+
+        .config-alert h3 {
+            font-family: 'Orbitron', monospace;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .code-block {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            color: var(--matrix-green);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .student-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .glass-card {
+                padding: 25px;
+            }
+            
+            .main-title {
+                font-size: 2.5rem;
+            }
+            
+            .student-card {
+                padding: 20px;
+            }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, var(--cyber-blue), var(--cyber-purple));
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, var(--cyber-purple), var(--neon-pink));
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Particles -->
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <header class="header">
+            <h1 class="main-title">Neural Student Hub</h1>
+            <p class="subtitle">Advanced Student Management System</p>
+        </header>
+        
+        <!-- Configuration Alert -->
+        <div class="config-alert" id="configSection">
+            <h3>⚡ System Configuration Required</h3>
+            <p>Initialize your Supabase neural network connection:</p>
+            
+            <div class="code-block">
+                <strong>1. Update SUPABASE_URL:</strong><br>
+                https://your-project-id.supabase.co
+            </div>
+            
+            <div class="code-block">
+                <strong>2. Update SUPABASE_ANON_KEY</strong>
+            </div>
+            
+            <div class="code-block">
+                <strong>3. Execute SQL schema:</strong><br>
+                CREATE TABLE students (<br>
+                &nbsp;&nbsp;id BIGSERIAL PRIMARY KEY,<br>
+                &nbsp;&nbsp;first_name TEXT NOT NULL,<br>
+                &nbsp;&nbsp;last_name TEXT NOT NULL,<br>
+                &nbsp;&nbsp;email TEXT NOT NULL,<br>
+                &nbsp;&nbsp;phone TEXT,<br>
+                &nbsp;&nbsp;grade TEXT NOT NULL,<br>
+                &nbsp;&nbsp;subject TEXT,<br>
+                &nbsp;&nbsp;created_at TIMESTAMPTZ DEFAULT NOW()<br>
+                );
+            </div>
+        </div>
+        
+        <!-- Add/Edit Student Form -->
+        <div class="glass-card">
+            <h2 class="section-title" id="formTitle">Initialize New Student</h2>
+            <form id="studentForm">
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label for="firstName">First Name</label>
+                        <input type="text" id="firstName" class="cyber-input" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" id="lastName" class="cyber-input" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="email">Neural Network ID (Email)</label>
+                        <input type="email" id="email" class="cyber-input" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="phone">Communication Link</label>
+                        <input type="tel" id="phone" class="cyber-input">
+                    </div>
+                    <div class="input-group">
+                        <label for="grade">Academic Level</label>
+                        <select id="grade" class="cyber-input" required>
+                            <option value="">Select Grade</option>
+                            <option value="9">Level 9</option>
+                            <option value="10">Level 10</option>
+                            <option value="11">Level 11</option>
+                            <option value="12">Level 12</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="subject">Primary Specialization</label>
+                        <input type="text" id="subject" class="cyber-input" placeholder="e.g., Quantum Mathematics, Bio-Engineering">
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <button type="submit" class="cyber-btn" id="submitBtn">
+                        <span>Initialize Student</span>
+                    </button>
+                    <button type="button" class="cyber-btn secondary" id="cancelBtn" style="display: none;">
+                        <span>Cancel Operation</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Students Database -->
+        <div class="glass-card">
+            <h2 class="section-title">Student Database</h2>
+            
+            <div class="search-container">
+                <input type="text" id="searchInput" class="search-input" placeholder="Search neural network...">
+                <div class="search-icon">🔍</div>
+            </div>
+            
+            <div id="studentsContainer">
+                <div class="loading-screen">
+                    <div class="loading-spinner"></div>
+                    <div class="loading-text">Initializing Neural Network...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification System -->
+    <div id="notification" class="notification"></div>
+
+    <script type="module">
+        // Import Supabase from CDN
+        import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js@2'
+        
+        // Supabase Configuration
+        const SUPABASE_URL = 'https://sufabmryrvbqekyalkuc.supabase.co'
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN1ZmFibXJ5cnZicWVreWFsa3VjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI5MTY2ODIsImV4cCI6MjA2ODQ5MjY4Mn0.pnXQGOa5HYJSZbMJ_iBM5rBGS8l1wDCPrQFHhZv7wB0'
+        
+        // Global variables
+        let supabaseClient = null;
+        let students = [];
+        let editingStudentId = null;
+        let filteredStudents = [];
+
+        // DOM elements
+        const studentForm = document.getElementById('studentForm');
+        const studentsContainer = document.getElementById('studentsContainer');
+        const searchInput = document.getElementById('searchInput');
+        const submitBtn = document.getElementById('submitBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const formTitle = document.getElementById('formTitle');
+        const configSection = document.getElementById('configSection');
+
+        // Initialize floating particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDuration = (Math.random() * 10 + 5) + 's';
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Initialize the app
+        function initializeApp() {
+            createParticles();
+            
+            // Check if Supabase is configured
+            if (SUPABASE_URL === 'YOUR_SUPABASE_URL' || SUPABASE_ANON_KEY === 'YOUR_SUPABASE_ANON_KEY') {
+                studentsContainer.innerHTML = `
+                    <div class="error-message">
+                        <div style="font-size: 3rem; margin-bottom: 20px;">⚠️</div>
+                        <h3>Neural Network Connection Failed</h3>
+                        <p>Please configure your Supabase credentials to establish connection.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            try {
+                supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                configSection.style.display = 'none';
+                setupEventListeners();
+                loadStudents();
+                showNotification('Neural Network Connected Successfully!', 'success');
+            } catch (error) {
+                console.error('Error initializing Supabase:', error);
+                studentsContainer.innerHTML = `
+                    <div class="error-message">
+                        <div style="font-size: 3rem; margin-bottom: 20px;">❌</div>
+                        <h3>Connection Error</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+                showNotification('Neural Network Connection Failed', 'error');
+            }
+        }
+
+        // Event listeners
+        function setupEventListeners() {
+            studentForm.addEventListener('submit', handleFormSubmit);
+            searchInput.addEventListener('input', handleSearch);
+            cancelBtn.addEventListener('click', resetForm);
+        }
+
+        // Load students from database
+        async function loadStudents() {
+            try {
+                studentsContainer.innerHTML = `
+                    <div class="loading-screen">
+                        <div class="loading-spinner"></div>
+                        <div class="loading-text">Accessing Database...</div>
+                    </div>
+                `;
+                
+                const { data, error } = await supabaseClient
+                    .from('students')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                students = data || [];
+                filteredStudents = [...students];
+                renderStudents();
+            } catch (error) {
+                console.error('Error loading students:', error);
+                studentsContainer.innerHTML = `
+                    <div class="error-message">
+                        <div style="font-size: 3rem; margin-bottom: 20px;">🔌</div>
+                        <h3>Database Access Error</h3>
+                        <p>${error.message}</p>
+                        <small>Ensure the 'students' table exists in your database.</small>
+                    </div>
+                `;
+                showNotification('Database Access Failed: ' + error.message, 'error');
+            }
+        }
+
+        // Handle form submission
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            if (!supabaseClient) {
+                showNotification('Neural Network Not Connected', 'error');
+                return;
+            }
+            
+            const formData = {
+                first_name: document.getElementById('firstName').value.trim(),
+                last_name: document.getElementById('lastName').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                grade: document.getElementById('grade').value,
+                subject: document.getElementById('subject').value.trim()
+            };
+
+            try {
+                submitBtn.innerHTML = `<span>${editingStudentId ? 'Updating Neural Data...' : 'Processing Data...'}</span>`;
+                submitBtn.disabled = true;
+
+                if (editingStudentId) {
+                    const { error } = await supabaseClient
+                        .from('students')
+                        .update(formData)
+                        .eq('id', editingStudentId);
+
+                    if (error) throw error;
+                    showNotification('Student Profile Updated Successfully!', 'success');
+                } else {
+                    const { error } = await supabaseClient
+                        .from('students')
+                        .insert([formData]);
+
+                    if (error) throw error;
+                    showNotification('New Student Added to Neural Network!', 'success');
+                }
+
+                resetForm();
+                loadStudents();
+            } catch (error) {
+                console.error('Error saving student:', error);
+                showNotification('Data Processing Failed: ' + error.message, 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<span>${editingStudentId ? 'Update Student' : 'Initialize Student'}</span>`;
+            }
+        }
+
+        // Handle search
+        function handleSearch() {
+            const query = searchInput.value.toLowerCase().trim();
+            
+            if (query === '') {
+                filteredStudents = [...students];
+            } else {
+                filteredStudents = students.filter(student => 
+                    student.first_name.toLowerCase().includes(query) ||
+                    student.last_name.toLowerCase().includes(query) ||
+                    student.email.toLowerCase().includes(query) ||
+                    student.grade.toString().includes(query) ||
+                    (student.subject && student.subject.toLowerCase().includes(query))
+                );
+            }
+            
+            renderStudents();
+        }
+
+        // Render students
+        function renderStudents() {
+            if (filteredStudents.length === 0) {
+                studentsContainer.innerHTML = `
+                    <div class="no-data">
+                        <div class="no-data-icon">🤖</div>
+                        <h3>No Data Found</h3>
+                        <p>The neural network database is empty or no matches found.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const studentsHTML = filteredStudents.map(student => {
+                const initials = (student.first_name.charAt(0) + student.last_name.charAt(0)).toUpperCase();
+                return `
+                    <div class="student-card">
+                        <div class="student-header">
+                            <div class="student-avatar">${initials}</div>
+                            <div>
+                                <div class="student-name">${student.first_name} ${student.last_name}</div>
+                                <div class="student-grade">Level ${student.grade} Operative</div>
+                            </div>
+                        </div>
+                        
+                        <div class="student-details">
+                            <div class="detail-item">
+                                <span class="detail-icon">📧</span>
+                                <span class="detail-label">Network ID</span>
+                                <span class="detail-value">${student.email}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-icon">📱</span>
+                                <span class="detail-label">Comm Link</span>
+                                <span class="detail-value">${student.phone || 'Not Connected'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-icon">🎯</span>
+                                <span class="detail-label">Level</span>
+                                <span class="detail-value">Grade ${student.grade}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-icon">🧬</span>
+                                <span class="detail-label">Specialization</span>
+                                <span class="detail-value">${student.subject || 'General Studies'}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="student-actions">
+                            <button class="cyber-btn btn-small" onclick="editStudent(${student.id})">
+                                <span>Modify</span>
+                            </button>
+                            <button class="cyber-btn secondary btn-small" onclick="deleteStudent(${student.id})">
+                                <span>Terminate</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            studentsContainer.innerHTML = `<div class="student-grid">${studentsHTML}</div>`;
+        }
+
+        // Edit student
+        window.editStudent = function(id) {
+            const student = students.find(s => s.id === id);
+            if (!student) return;
+
+            editingStudentId = id;
+            
+            document.getElementById('firstName').value = student.first_name;
+            document.getElementById('lastName').value = student.last_name;
+            document.getElementById('email').value = student.email;
+            document.getElementById('phone').value = student.phone || '';
+            document.getElementById('grade').value = student.grade;
+            document.getElementById('subject').value = student.subject || '';
+
+            formTitle.textContent = 'Modify Student Profile';
+            submitBtn.innerHTML = '<span>Update Neural Data</span>';
+            cancelBtn.style.display = 'inline-block';
+
+            document.querySelector('.glass-card').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Delete student
+        window.deleteStudent = async function(id) {
+            if (!confirm('⚠️ CRITICAL: This will permanently delete the student from the neural network. Proceed?')) return;
+
+            if (!supabaseClient) {
+                showNotification('Neural Network Not Connected', 'error');
+                return;
+            }
+
+            try {
+                const { error } = await supabaseClient
+                    .from('students')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                showNotification('Student Data Purged Successfully!', 'success');
+                loadStudents();
+            } catch (error) {
+                console.error('Error deleting student:', error);
+                showNotification('Deletion Failed: ' + error.message, 'error');
+            }
+        }
+
+        // Reset form
+        function resetForm() {
+            studentForm.reset();
+            editingStudentId = null;
+            formTitle.textContent = 'Initialize New Student';
+            submitBtn.innerHTML = '<span>Initialize Student</span>';
+            cancelBtn.style.display = 'none';
+        }
+
+        // Show notification
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 4000);
+        }
+
+        // Start the neural network
+        initializeApp();
+    </script>
+</body>
+</html>
